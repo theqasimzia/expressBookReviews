@@ -16,7 +16,7 @@ public_users.get('/', function (req, res) {
 public_users.get('/isbn/:isbn', function (req, res) {
     const isbn = req.params.isbn;
     const book = books[isbn];
-    
+
     if (book) {
         res.status(200).json({ book: book });
     } else {
@@ -26,17 +26,50 @@ public_users.get('/isbn/:isbn', function (req, res) {
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const author = req.params.author.toLowerCase();
+    const booksByAuthor = [];
+
+    for (let isbn in books) {
+        if (books[isbn].author.toLowerCase() === author) {
+            booksByAuthor.push(books[isbn]);
+        }
+    }
+
+    if (booksByAuthor.length > 0) {
+        res.status(200).json({ books: booksByAuthor });
+    } else {
+        res.status(404).json({ message: "No books found by this author" });
+    }
 });
 
-// Get all books based on title
+// Get book details based on title
 public_users.get('/title/:title', function (req, res) {
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const title = req.params.title.toLowerCase();
+    const booksByTitle = [];
+
+    for (let isbn in books) {
+        if (books[isbn].title.toLowerCase() === title) {
+            booksByTitle.push(books[isbn]);
+        }
+    }
+
+    if (booksByTitle.length > 0) {
+        res.status(200).json({ books: booksByTitle });
+    } else {
+        res.status(404).json({ message: "No books found with this title" });
+    }
 });
 
 // Get book review
 public_users.get('/review/:isbn', function (req, res) {
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const isbn = req.params.isbn;
+    const book = books[isbn];
+
+    if (book && book.reviews) {
+        res.status(200).json({ reviews: book.reviews });
+    } else {
+        res.status(404).json({ message: "Book or reviews not found" });
+    }
 });
 
 module.exports.general = public_users;
