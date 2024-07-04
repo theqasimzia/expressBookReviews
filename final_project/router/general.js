@@ -1,8 +1,10 @@
 const express = require('express');
 const axios = require('axios');
 let books = require("./booksdb.js");
+let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+<<<<<<< HEAD
 // Route to fetch the list of books using async/await with axios
 public_users.get('/', async (req, res) => {
     try {
@@ -10,6 +12,40 @@ public_users.get('/', async (req, res) => {
         return res.status(200).json(response.data);
     } catch (error) {
         return res.status(500).json({ message: `Error fetching books: ${error.message}` });
+=======
+// Register a new user
+public_users.post("/register", (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    if (users[username]) {
+        return res.status(409).json({ message: "Username already exists" });
+    }
+
+    users[username] = { username, password };
+    return res.status(201).json({ message: "User registered successfully" });
+});
+
+
+
+// Get the book list available in the shop
+public_users.get('/', function (req, res) {
+    res.status(200).json({ books: books });
+});
+
+// Get book details based on ISBN
+public_users.get('/isbn/:isbn', function (req, res) {
+    const isbn = req.params.isbn;
+    const book = books[isbn];
+
+    if (book) {
+        res.status(200).json({ book: book });
+    } else {
+        res.status(404).json({ message: "Book not found" });
+>>>>>>> 13f18b29e356b8239b19bbc2a47a194ba6de56f0
     }
 });
 
